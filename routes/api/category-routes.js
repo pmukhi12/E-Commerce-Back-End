@@ -16,13 +16,13 @@ router.get('/:id', (req, res) => {
         id: req.params.id
       },
       // // be sure to include its associated Products
-      // // include: [
-      // //   Product,
-      // //   {
-      // //     model: Tag,
-      // //     through: ProductTag
-      // //   }
-      // ]
+      include: [
+        Product,
+        {
+          model: Product,
+          key: 'category_id'
+        }
+      ]
     }
   ).then((category) => res.json(category))
   .catch((err) => {
@@ -40,9 +40,17 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
   // update a category by its `id` value
-  
+  try {
+
+    const updatedCategory = req.body.name;
+    console.log(updatedCategory);
+    await Category.update(req.body.params.id);
+    res.status(200).json(updatedCategory);
+  } catch (err) {
+    res.status(400).json(err);
+  }
 });
 
 router.delete('/:id', (req, res) => {
